@@ -54,8 +54,8 @@ for await (const value of count) {
 
 ## Lit
 
-The cool thing about using AsyncIterators is that frameworks can expose
-tools methods for re-rendering components when new values are yielded.
+The cool thing about using AsyncIterators is that frameworks can expose 
+methods for re-rendering components when new values are yielded.
 
 For instance, Lit exposes `asyncReplace` and `asyncAppend` directives
 to easily render new values from an async iterable.
