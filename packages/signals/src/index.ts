@@ -7,6 +7,13 @@ export class SignalUpdatedEvent<T> extends Event {
 export class State<T> extends EventTarget {
   private _value: T;
 
+  /**
+   * Creates a new signal
+   *
+   * @param { T } value Initial value of the Signal
+   * @example
+   * const counter = new Signal.State(0)
+   */
   constructor(value: T) {
     super();
     this._value = value;
@@ -25,19 +32,32 @@ export class State<T> extends EventTarget {
     }
   }
 
-  async *stream(): AsyncGenerator<T> {
+  /**
+   * Async generator that yields the current value of the Signal and waits for the next update
+   */
+  async *stream() {
     yield this.value;
     while (true) {
-      yield await new Promise(resolve => this.addEventListener('updated', () => resolve(this.value), { once: true }));
+      yield new Promise(resolve => this.addEventListener('updated', () => resolve(this.value), { once: true }));
     }
   }
 
+  /**
+   * Async iterator that yields the current value
+   */
   [Symbol.asyncIterator]() {
     return this.stream();
   }
 }
 
 export class Computed<F extends (...args: any) => any, P extends State<any>[]> extends State<ReturnType<F>> {
+  /**
+   * Computed Signal
+   * @param { Function } fn Function that computes the value of the Signal
+   * @param { State[] } props An array of dependencies that are instances of either Signal.State or Signal.Computed
+   * @example
+   * const isDone = Signal.Computed(() => counter.value > 9, [counter])
+   */
   constructor(private fn: F, props: P) {
     super(fn());
     props.forEach(prop => this.watcher(prop));
@@ -50,7 +70,13 @@ export class Computed<F extends (...args: any) => any, P extends State<any>[]> e
   }
 }
 
-export class Signal {
-  static State = State;
-  static Computed = Computed;
+/**
+ * Signal object that contains State and Computed classes
+ * @example
+ * const counter = Signal.State(0)
+ * const isDone = Signal.Computed(() => counter.value > 9, [counter])
+ */
+export const Signal = {
+  State: State,
+  Computed: Computed,
 }
