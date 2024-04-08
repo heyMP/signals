@@ -34,7 +34,7 @@ count.addEventListener('update', () => {
 
 ## AsyncIterator
 
-Signals also contain a [Symbol.iterator](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/iterator).
+Signals also contain a [[Symbol.iterator]](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol/iterator).
 Async iterables are objects with a `[Symbol.asyncIterator]` method, which
 returns an iterator who's `next()` method returns a Promise. This allows you
 to use the `for await...of` syntax to listen to the signal.
