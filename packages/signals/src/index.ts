@@ -34,6 +34,9 @@ export class State<T> extends EventTarget {
 
   /**
    * Async generator that yields the current value of the Signal and waits for the next update
+   * @example
+   * for await (const value of counter.stream()) {
+   * }
    */
   async *stream() {
     yield this.value;
@@ -44,6 +47,9 @@ export class State<T> extends EventTarget {
 
   /**
    * Async iterator that yields the current value
+   * @example
+   * for await (const value of counter) {
+   * }
    */
   [Symbol.asyncIterator]() {
     return this.stream();
