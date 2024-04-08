@@ -27,3 +27,4 @@ src/**/*.js
 src/**/*.js.map
 src/**/*.d.ts.map
 src/**/*.d.ts
+tsconfig.tsbuildinfo
