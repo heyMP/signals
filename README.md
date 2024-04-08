@@ -2,7 +2,7 @@
 
 # @heymp/signals 🚦
 
-Minimal signals like library built powerful browser features;
+Minimal signals like library built with powerful browser features;
 EventTarget and AsyncIterators.
 
 ## Usage example
