@@ -1,6 +1,6 @@
-import { Signal, Computed } from '@heymp/signals';
+import { Signal } from '@heymp/signals';
 
-class Counter extends Signal<number> {
+class Counter extends Signal.State<number> {
   constructor(value: number) {
     super(value);
   }
@@ -19,7 +19,7 @@ class Counter extends Signal<number> {
 }
 
 const counter = new Counter(0);
-const isDone = new Computed(() => counter.value > 9, [counter]);
+const isDone = new Signal.Computed(() => counter.value > 9, [counter]);
 
 export const store = {
   counter,

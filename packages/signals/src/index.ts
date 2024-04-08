@@ -4,7 +4,7 @@ export class SignalUpdatedEvent<T> extends Event {
   }
 }
 
-export class Signal<T> extends EventTarget {
+export class State<T> extends EventTarget {
   private _value: T;
 
   constructor(value: T) {
@@ -37,15 +37,20 @@ export class Signal<T> extends EventTarget {
   }
 }
 
-export class Computed<F extends (...args: any) => any, P extends Signal<any>[]> extends Signal<ReturnType<F>> {
+export class Computed<F extends (...args: any) => any, P extends State<any>[]> extends State<ReturnType<F>> {
   constructor(private fn: F, props: P) {
     super(fn());
     props.forEach(prop => this.watcher(prop));
   }
 
-  async watcher(prop: Signal<any>) {
+  async watcher(prop: State<any>) {
     for await (const _ of prop) {
       this.value = this.fn();
     }
   }
+}
+
+export class Signal {
+  static State = State;
+  static Computed = Computed;
 }
