@@ -1,15 +1,14 @@
 import { LitElement, css, html } from 'lit'
 import { customElement} from 'lit/decorators.js'
-import { asyncReplace } from 'lit/directives/async-replace.js'
 import { Computed } from '@heymp/signals';
 import litLogo from './assets/lit.svg'
 import viteLogo from '/vite.svg'
 import { store } from './store';
+import { watchSignal } from '@heymp/signals/lit';
 import './my-doubler';
 
 // example of how we can interact with existing signals
-store.counter.value = 2;
-const nextValue = new Computed(() => store.counter.value + 1, [store.counter]);
+store.counter.value = 1;
 
 /**
  * An example element.
@@ -19,8 +18,15 @@ const nextValue = new Computed(() => store.counter.value + 1, [store.counter]);
  */
 @customElement('my-element')
 export class MyElement extends LitElement {
+  @watchSignal
+  private isDone = store.isDone;
+
+  @watchSignal
+  private counter = store.counter;
+
+  private nextValue = new Computed(() => store.counter.value + 1, [store.counter]);
+
   render() {
-    console.log('render')
     return html`
       <div>
         <a href="https://vitejs.dev" target="_blank">
@@ -32,19 +38,18 @@ export class MyElement extends LitElement {
       </div>
       <slot></slot>
       <div class="card">
-        ${asyncReplace(store.isDone, (value) => this.renderCounter(value as typeof store.isDone.value))}
+        ${this.renderCounter(this.isDone.value)}
         <div>
           Current doubled value: <my-doubler .count=${store.counter}></my-doubler>
         </div>
         <div>
-          Future doubled value: <my-doubler .count=${nextValue}></my-doubler>
+          Future doubled value: <my-doubler .count=${this.nextValue}></my-doubler>
         </div>
       </div>
     `
   }
 
   renderCounter(isDone: boolean) {
-    console.log('renderCounter')
     if (isDone) {
       return html`
         <h1>Counter is done!</h1>
@@ -54,8 +59,8 @@ export class MyElement extends LitElement {
       `
     }
     return html`
-      <button @click=${() => store.counter.increment()} part="button">
-        count is ${asyncReplace(store.counter)}
+      <button @click=${() => this.counter.increment()} part="button">
+        count is ${this.counter.value}
       </button>
     `
   }

@@ -12,7 +12,12 @@
     ".": {
       "types": "./src/index.d.ts",
       "default": "./src/index.js"
-    }
+    },
+    "./lit": {
+      "types": "./src/lib/lit/decorators/watchSignal.d.ts",
+      "default": "./src/lib/lit/decorators/watchSignal.js"
+    },
+    "./lit/*": "./src/lib/lit/*"
   },
   "files": [
     "src/*{.d.ts,.js}"

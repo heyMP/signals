@@ -82,7 +82,7 @@ export class Computed<F extends (...args: any) => any, P extends State<any>[]> e
  * const counter = Signal.State(0)
  * const isDone = Signal.Computed(() => counter.value > 9, [counter])
  */
-export const Signal = {
-  State: State,
-  Computed: Computed,
+export class Signal {
+  static State = State;
+  static Computed = Computed;
 }

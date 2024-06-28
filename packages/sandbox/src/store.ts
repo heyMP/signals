@@ -19,9 +19,11 @@ class Counter extends Signal.State<number> {
 }
 
 const counter = new Counter(0);
+const name = new Signal.State('World');
 const isDone = new Signal.Computed(() => counter.value > 9, [counter]);
 
 export const store = {
   counter,
-  isDone
+  isDone,
+  name,
 }

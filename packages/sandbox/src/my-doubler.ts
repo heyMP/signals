@@ -1,7 +1,7 @@
 import { LitElement, html } from 'lit'
-import { customElement, state } from 'lit/decorators.js'
-import { asyncReplace } from 'lit/directives/async-replace.js'
-import { Signal } from '@heymp/signals';
+import { customElement } from 'lit/decorators.js'
+import { State } from '@heymp/signals';
+import { watchSignal } from '@heymp/signals/lit';
 
 /**
  * An example element.
@@ -11,14 +11,13 @@ import { Signal } from '@heymp/signals';
  */
 @customElement('my-doubler')
 export class MyDoubler extends LitElement {
-  @state() private count?: Signal<number>;
+  @watchSignal
+  private count?: State<number>;
 
   render() {
-    console.log('render my-doubler');
-    if (!this.count) { return }
-    const count = this.count;
+    console.log('render');
     return html`
-      ${asyncReplace(count, () => count.value * 2)}
+      ${this.count?.value}
     `
   }
 }
