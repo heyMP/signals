@@ -5,7 +5,7 @@ export class SignalUpdatedEvent<T> extends Event {
 }
 
 export class State<T> extends EventTarget {
-  private _value: T;
+  _value: T;
 
   /**
    * Creates a new signal

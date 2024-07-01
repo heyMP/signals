@@ -17,7 +17,11 @@
       "types": "./src/lib/lit/decorators/watchSignal.d.ts",
       "default": "./src/lib/lit/decorators/watchSignal.js"
     },
-    "./lit/*": "./src/lib/lit/*"
+    "./lit/*": "./src/lib/lit/*",
+    "./react": {
+      "types": "./src/lib/react/useSignal.d.ts",
+      "default": "./src/lib/react/useSignal.js"
+    }
   },
   "files": [
     "src/*{.d.ts,.js}"
@@ -29,5 +33,9 @@
   "devDependencies": {
     "tslib": "^2.6.2",
     "typescript": "^5.2.2"
+  },
+    "peerDependencies": {
+    "@types/react": "^18.2.23",
+    "react": "^18.2.0"
   }
 }
