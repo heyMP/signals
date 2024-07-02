@@ -28,7 +28,18 @@
   ],
   "scripts": {
     "dev": "tsc --watch",
-    "build": "tsc"
+    "build": "tsc",
+    "prepack": "wireit",
+    "postpack": "wireit"
+  },
+  "wireit": {
+    "prepack": {
+      "command": "cp ../../README.md .",
+      "dependencies": ["build"]
+    },
+    "postpack": {
+      "command": "rm README.md"
+    }
   },
   "devDependencies": {
     "tslib": "^2.6.2",
