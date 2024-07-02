@@ -7,7 +7,9 @@
   },
   "scripts": {
     "build": "wireit",
-    "release": "wireit"
+    "release": "wireit",
+    "precompress": "wireit",
+    "postcompress": "wireit"
   },
   "wireit": {
     "build": {
@@ -16,6 +18,18 @@
     "release": {
       "command": "npx @changesets/cli publish",
       "dependencies": ["build"]
+    },
+    "precompress": {
+      "dependencies": ["precompress:readme"]
+    },
+    "postcompress": {
+      "dependencies": ["postcompress:readme"]
+    },
+    "precompress:readme": {
+      "command": "cp README.md packages/signals/"
+    },
+    "precompress:readme": {
+      "command": "rm packages/signals/README.md"
     }
   },
   "keywords": [],
