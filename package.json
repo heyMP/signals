@@ -6,7 +6,17 @@
     "url": "https://github.com/heyMP/signals"
   },
   "scripts": {
-    "release": "npx @changesets/cli publish"
+    "build": "wireit",
+    "release": "wireit"
+  },
+  "wireit": {
+    "build": {
+      "command": "npm run build --workspace=@heymp/signals"
+    },
+    "release": {
+      "command": "npx @changesets/cli publish",
+      "dependencies": ["build"]
+    }
   },
   "keywords": [],
   "license": "ISC",
@@ -14,6 +24,7 @@
     "packages/*"
   ],
   "devDependencies": {
-    "@changesets/cli": "^2.27.7"
+    "@changesets/cli": "^2.27.7",
+    "wireit": "^0.14.4"
   }
 }
