@@ -7,6 +7,7 @@
     "sandbox": "0.0.0"
   },
   "changesets": [
-    "clever-files-drive"
+    "clever-files-drive",
+    "dry-foxes-agree"
   ]
 }
