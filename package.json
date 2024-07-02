@@ -2,7 +2,7 @@
   "description": "",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "release": "npx @changesets/cli publish"
   },
   "keywords": [],
   "license": "ISC",
