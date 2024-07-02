@@ -1,6 +1,10 @@
 {
   "description": "",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/heyMP/signals"
+  },
   "scripts": {
     "release": "npx @changesets/cli publish"
   },
