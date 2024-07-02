@@ -1,6 +1,6 @@
 {
   "name": "@heymp/signals",
-  "version": "1.0.0-latest.5",
+  "version": "0.0.0",
   "type": "module",
   "main": "src/index.js",
   "module": "src/index.js",

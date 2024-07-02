@@ -1,5 +1,5 @@
 ---
-"@heymp/signals": major
+"@heymp/signals": minor
 ---
 
 Initial Release
