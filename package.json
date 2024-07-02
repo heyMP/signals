@@ -7,29 +7,11 @@
   },
   "scripts": {
     "build": "wireit",
-    "release": "wireit",
-    "precompress": "wireit",
-    "postcompress": "wireit"
+    "release": "npx @changesets/cli publish"
   },
   "wireit": {
     "build": {
       "command": "npm run build --workspace=@heymp/signals"
-    },
-    "release": {
-      "command": "npx @changesets/cli publish",
-      "dependencies": ["build"]
-    },
-    "precompress": {
-      "dependencies": ["precompress:readme"]
-    },
-    "postcompress": {
-      "dependencies": ["postcompress:readme"]
-    },
-    "precompress:readme": {
-      "command": "cp README.md packages/signals/"
-    },
-    "precompress:readme": {
-      "command": "rm packages/signals/README.md"
     }
   },
   "keywords": [],
