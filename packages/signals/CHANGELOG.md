@@ -1,5 +1,11 @@
 # @heymp/signals
 
+## 1.0.0-latest.4
+
+### Patch Changes
+
+- 1b82da1: Add readme to signals package
+
 ## 1.0.0-latest.3
 
 ### Patch Changes
