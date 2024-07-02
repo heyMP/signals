@@ -1,6 +1,6 @@
 {
   "mode": "pre",
-  "tag": "next",
+  "tag": "latest",
   "initialVersions": {
     "@heymp/signals": "0.0.1",
     "vite-eslint-test": "0.0.0",
