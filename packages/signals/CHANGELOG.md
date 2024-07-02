@@ -1,5 +1,11 @@
 # @heymp/signals
 
+## 1.0.0-latest.3
+
+### Patch Changes
+
+- 5b4f6aa: Publish lib directory
+
 ## 1.0.0-latest.2
 
 ### Patch Changes
