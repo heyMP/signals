@@ -1,5 +1,11 @@
 # @heymp/signals
 
+## 1.0.0-latest.5
+
+### Patch Changes
+
+- 6ae61db: Revamp release scripts
+
 ## 1.0.0-latest.4
 
 ### Patch Changes

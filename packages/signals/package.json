@@ -1,6 +1,6 @@
 {
   "name": "@heymp/signals",
-  "version": "1.0.0-latest.4",
+  "version": "1.0.0-latest.5",
   "type": "module",
   "main": "src/index.js",
   "module": "src/index.js",
@@ -35,7 +35,9 @@
   "wireit": {
     "prepack": {
       "command": "cp ../../README.md .",
-      "dependencies": ["build"]
+      "dependencies": [
+        "build"
+      ]
     },
     "postpack": {
       "command": "rm README.md"
