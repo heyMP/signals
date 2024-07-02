@@ -2,7 +2,11 @@
   "mode": "pre",
   "tag": "next",
   "initialVersions": {
-    "@heymp/signals": "0.0.1"
+    "@heymp/signals": "0.0.1",
+    "vite-eslint-test": "0.0.0",
+    "sandbox": "0.0.0"
   },
-  "changesets": []
+  "changesets": [
+    "clever-files-drive"
+  ]
 }
