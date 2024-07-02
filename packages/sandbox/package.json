@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@lit/task": "^1.0.0",
-    "@heymp/signals": "0.0.0",
+    "@heymp/signals": "0.1.0",
     "lit": "^3.1.2"
   },
   "devDependencies": {
