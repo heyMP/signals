@@ -24,7 +24,7 @@
     }
   },
   "files": [
-    "src/*{.d.ts,.js}"
+    "src/**/*{.d.ts,.js}"
   ],
   "scripts": {
     "dev": "tsc --watch",
