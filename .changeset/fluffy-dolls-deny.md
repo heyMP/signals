@@ -2,4 +2,4 @@
 "@heymp/signals": minor
 ---
 
-Initial Release
+Initial release
