@@ -51,9 +51,6 @@ for await (const value of count) {
 }
 ```
 
-
-## Lit
-
 The cool thing about using AsyncIterators is that frameworks can expose 
 methods for re-rendering components when new values are yielded.
 
@@ -72,6 +69,56 @@ export class MyElement extends LitElement {
       </button>
     `;
   }
+}
+```
+
+## Adapters
+
+This library exposes framework specific adapters to make it easy to
+sync changes of the Signals to trigger the component render lifecycle.
+
+### React
+
+```tsx
+import { Signal } from '@heymp/signals';
+import { useSignal } from '@heymp/signals/react';
+
+const counter = new Signal.State(0);
+
+function App() {
+  const [count] = useSignal(counter);
+
+  return (
+    <>
+      <button onClick={() => counter.value++}>
+        count is {count}
+      </button>
+    </>
+  );
+}
+```
+
+### Lit
+
+```ts
+import { LitElement, html } from 'lit'
+import { State } from '@heymp/signals';
+import { watchSignal } from '@heymp/signals/lit';
+
+export class MyCounter extends LitElement {
+  @watchSignal
+  private count?: State<number>;
+
+  @watchSignal
+  private message = new State('hello, world');
+
+  render() {
+    return html`
+      ${this.message.value} ${this.count?.value}
+    `
+  }
+}
+
 }
 ```
 
