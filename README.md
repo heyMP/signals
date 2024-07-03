@@ -118,8 +118,6 @@ export class MyCounter extends LitElement {
     `
   }
 }
-
-}
 ```
 
 ## Signals Standard
