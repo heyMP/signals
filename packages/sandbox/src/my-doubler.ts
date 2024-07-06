@@ -14,10 +14,12 @@ export class MyDoubler extends LitElement {
   @watchSignal
   private count?: State<number>;
 
+  @watchSignal
+  private message = new State('hello, world');
+
   render() {
-    console.log('render');
     return html`
-      ${this.count?.value}
+      ${this.message.value} ${this.count?.value}
     `
   }
 }

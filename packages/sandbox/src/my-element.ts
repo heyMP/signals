@@ -1,11 +1,13 @@
 import { LitElement, css, html } from 'lit'
 import { customElement} from 'lit/decorators.js'
-import { Computed } from '@heymp/signals';
+import { State, Computed } from '@heymp/signals';
 import litLogo from './assets/lit.svg'
 import viteLogo from '/vite.svg'
 import { store } from './store';
 import { watchSignal } from '@heymp/signals/lit';
 import './my-doubler';
+import './my-late-signal';
+import './my-form';
 
 // example of how we can interact with existing signals
 store.counter.value = 1;
@@ -26,7 +28,19 @@ export class MyElement extends LitElement {
 
   private nextValue = new Computed(() => store.counter.value + 1, [store.counter]);
 
+  @watchSignal
+  private myFormData = new State(new FormData());
+
+  connectedCallback(): void {
+    super.connectedCallback();
+    setTimeout(() => {
+      const el = this.shadowRoot?.querySelector('my-late-signal');
+      el?.remove();
+    }, 5000);
+  }
+
   render() {
+    console.log(Array.from(this.myFormData.value))
     return html`
       <div>
         <a href="https://vitejs.dev" target="_blank">
@@ -46,7 +60,23 @@ export class MyElement extends LitElement {
           Future doubled value: <my-doubler .count=${this.nextValue}></my-doubler>
         </div>
       </div>
+      <my-late-signal></my-late-signal>
+      <my-form .formData=${this.myFormData}></my-form>
+      <pre>${this.formatPreFormData(this.myFormData.value)}</pre>
     `
+  }
+
+  formatPreFormData(formData: FormData) {
+    const output = [];
+    for (const [key, value] of formData) {
+      if (value instanceof File) {
+        output.push([key, { name: value.name }]);
+      }
+      else {
+        output.push([key, value]);
+      }
+    }
+    return JSON.stringify(output);
   }
 
   renderCounter(isDone: boolean) {
