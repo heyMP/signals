@@ -41,7 +41,7 @@ export class State<T> extends EventTarget {
   async *stream() {
     yield this.value;
     while (true) {
-      yield new Promise(resolve => this.addEventListener('updated', () => resolve(this.value), { once: true }));
+      yield new Promise<T>(resolve => this.addEventListener('updated', () => resolve(this.value), { once: true }));
     }
   }
 
