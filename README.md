@@ -1,4 +1,4 @@
-**IN DEVELOPMENT**
+![bundlephopia](https://img.shields.io/bundlephobia/minzip/%40heymp/signals/latest)
 
 # @heymp/signals 🚦
 
