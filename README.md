@@ -22,6 +22,8 @@ for await (const value of isDone) {
 }
 ```
 
+See the [Signals Todo MVC](https://github.com/heyMP/signals-todo-mvc) example.
+
 ## EventTarget
 
 Signals are based on the [EventTarget](https://developer.mozilla.org/en-US/docs/Web/API/EventTarget)
