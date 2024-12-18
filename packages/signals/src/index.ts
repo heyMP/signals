@@ -76,6 +76,44 @@ export class Computed<F extends (...args: any) => any, P extends State<any>[]> e
   }
 }
 
+export class List<T extends State<any>> extends State<T[]> {
+  override get value() {
+    return super.value;
+  }
+
+  override set value(value: T[]) {
+    if (this._value === value) return;
+    this._value = value;
+    this.dispatchEvent(new Event('updated'));
+  }
+
+  add(signal: T) {
+    this.value.push(signal);
+    signal.addEventListener('updated', () => this.dispatchEvent(new Event('updated')));
+    this.dispatchEvent(new Event('updated'));
+  }
+
+  remove(signal: T) {
+    const index = this.value.indexOf(signal);
+    if (index > -1) {
+      this.value.splice(index, 1);
+      signal.removeEventListener('updated', () => this.dispatchEvent(new Event('updated')));
+      this.dispatchEvent(new Event('updated'));
+    }
+  }
+
+  override async *stream() {
+    yield this.value;
+    while (true) {
+      const targets = [this, ...this.value];
+      await Promise.race(targets.map(signal => 
+        new Promise<void>(resolve => signal.addEventListener('updated', () => resolve(), { once: true }))
+      ));
+      yield this.value;
+    }
+  }
+}
+
 /**
  * Signal object that contains State and Computed classes
  * @example
@@ -85,4 +123,5 @@ export class Computed<F extends (...args: any) => any, P extends State<any>[]> e
 export class Signal {
   static State = State;
   static Computed = Computed;
+  static List = List;
 }
