@@ -24,8 +24,6 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
 }
@@ -35,4 +33,15 @@ body {
     color: #213547;
     background-color: #ffffff;
   }
+}
+
+.user-list {
+  padding: 2.5rem;
+}
+
+details {
+  padding: 1em; 
+  border: 5px solid #f7f7f7;
+  border-radius: 3px;
+  margin: 1em;
 }
