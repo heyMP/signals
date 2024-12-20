@@ -1,5 +1,3 @@
-console.log('hi')
-
 export class SignalUpdatedEvent<T> extends Event {
   constructor(public oldValue: T, public newValue: T) {
     super('updated');
@@ -8,8 +6,6 @@ export class SignalUpdatedEvent<T> extends Event {
 
 export class State<T> extends EventTarget {
   _value: T;
-
-  _abortCtrl = new AbortController();
 
   /**
    * Creates a new signal
@@ -45,7 +41,7 @@ export class State<T> extends EventTarget {
   async *stream() {
     yield this.value;
     while (true) {
-      yield new Promise<T>(resolve => this.addEventListener('updated', () => resolve(this.value), { once: true, signal: this._abortCtrl.signal }));
+      yield new Promise<T>(resolve => this.addEventListener('updated', () => resolve(this.value), { once: true }));
     }
   }
 
@@ -57,10 +53,6 @@ export class State<T> extends EventTarget {
    */
   [Symbol.asyncIterator]() {
     return this.stream();
-  }
-
-  disconnect() {
-    this._abortCtrl.abort();
   }
 }
 
@@ -91,51 +83,47 @@ export class List<T extends State<any>> extends State<T[]> {
 
   override set value(value: T[]) {
     if (this._value === value) return;
-    this._value.forEach(i => i.disconnect());
     this._value = value;
     this.dispatchEvent(new Event('updated'));
   }
+
+  // add(signal: T) {
+  //   this.value.push(signal);
+  //   signal.addEventListener('updated', () => this.dispatchEvent(new Event('updated')));
+  //   this.dispatchEvent(new Event('updated'));
+  // }
+
+  // remove(signal: T) {
+  //   const index = this.value.indexOf(signal);
+  //   if (index > -1) {
+  //     this.value.splice(index, 1);
+  //     signal.removeEventListener('updated', () => this.dispatchEvent(new Event('updated')));
+  //     this.dispatchEvent(new Event('updated'));
+  //   }
+  // }
 
   override async *stream() {
     yield this.value;
     while (true) {
       const targets = [this, ...this.value];
       const ac = new AbortController();
-      this._abortCtrl.signal.onabort = () => {
-        ac.abort();
-      }
       await Promise.race(targets.map(target =>
-        new Promise<void>(resolve => target.addEventListener('updated', () => {
-          resolve()
-        }, { once: true, signal: ac.signal }))
+        new Promise<void>(resolve => target.addEventListener('updated', () => resolve(), { once: true, signal: ac.signal }))
       ));
       ac.abort();
       yield this.value;
     }
   }
-
   // override async *stream() {
   //   yield this.value;
   //   while (true) {
   //     const targets = [this, ...this.value];
-  //     const ac = new AbortController();
-  //     this._abortCtrl.signal.onabort = () => {
-  //       ac.abort();
-  //     }
-  //     await Promise.race(targets.map(target =>
-  //       new Promise<void>(resolve => target.addEventListener('updated', () => {
-  //         resolve()
-  //       }, { once: true, signal: ac.signal }))
+  //     await Promise.race(targets.map(t =>
+  //       new Promise<void>(resolve => t.addEventListener('updated', () => resolve(), { once: true }))
   //     ));
-  //     ac.abort();
   //     yield this.value;
   //   }
   // }
-
-  override disconnect(): void {
-    this.value.forEach(i => i.disconnect());
-    super.disconnect();
-  }
 }
 
 /**
