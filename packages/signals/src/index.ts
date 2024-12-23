@@ -49,7 +49,6 @@ export class State<T> extends EventTarget {
     while (!this._ac.signal.aborted) {
       yield new Promise<T>((resolve) => {
         this._ac.signal.onabort = () => {
-          console.log('disconnecting')
           resolve(this.value);
         }
         this.addEventListener('updated', () => resolve(this.value), { once: true, signal: this._ac.signal })
@@ -96,6 +95,16 @@ export class Computed<F extends (...args: any) => any, P extends State<any>[]> e
 export class List<T extends State<any>> extends State<T[]> {
   _acChildren?: AbortController;
 
+  /**
+   * Creates a reactive array of signals.
+   * Iterator updates when child values have updated.
+   *
+   * @param { T[] } value Initial value of arrray of Signals.
+   * @example
+   * const counter1 = new Signal.State(0)
+   * const counter2 = new Signal.State(0)
+   * const counters = new Signal.List([ counter1, counter2 ])
+   */
   constructor(value: T[]) {
     super(value);
     this._watchChildren();
