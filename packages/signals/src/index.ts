@@ -128,6 +128,7 @@ export class List<T extends State<any>> extends State<T[]> {
   }
 
   disconnectChildren(): void {
+    this.value.forEach(i => i.disconnect());
     this._acChildren?.abort();
     this._acChildren = new AbortController();
   }
