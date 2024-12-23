@@ -9,7 +9,7 @@ export class SignalUpdatedEvent<T> extends Event {
 export class State<T> extends EventTarget {
   _value: T;
 
-  _abortCtrl = new AbortController();
+  _ac = new AbortController();
 
   /**
    * Creates a new signal
@@ -42,10 +42,18 @@ export class State<T> extends EventTarget {
    * for await (const value of counter.stream()) {
    * }
    */
-  async *stream() {
-    yield this.value;
-    while (true) {
-      yield new Promise<T>(resolve => this.addEventListener('updated', () => resolve(this.value), { once: true, signal: this._abortCtrl.signal }));
+  async *stream(options?: { immediate: boolean }) {
+    if (!options?.immediate === false) {
+      yield this.value;
+    }
+    while (!this._ac.signal.aborted) {
+      yield new Promise<T>((resolve) => {
+        this._ac.signal.onabort = () => {
+          console.log('disconnecting')
+          resolve(this.value);
+        }
+        this.addEventListener('updated', () => resolve(this.value), { once: true, signal: this._ac.signal })
+      });
     }
   }
 
@@ -60,7 +68,8 @@ export class State<T> extends EventTarget {
   }
 
   disconnect() {
-    this._abortCtrl.abort();
+    this._ac.abort();
+    this._ac = new AbortController();
   }
 }
 
@@ -85,56 +94,42 @@ export class Computed<F extends (...args: any) => any, P extends State<any>[]> e
 }
 
 export class List<T extends State<any>> extends State<T[]> {
+  _acChildren?: AbortController;
+
+  constructor(value: T[]) {
+    super(value);
+    this._watchChildren();
+  }
+
   override get value() {
     return super.value;
   }
 
   override set value(value: T[]) {
     if (this._value === value) return;
-    this._value.forEach(i => i.disconnect());
     this._value = value;
     this.dispatchEvent(new Event('updated'));
+    this.disconnectChildren();
+    this._watchChildren();
   }
 
-  override async *stream() {
-    yield this.value;
-    while (true) {
-      const targets = [this, ...this.value];
-      const ac = new AbortController();
-      this._abortCtrl.signal.onabort = () => {
-        ac.abort();
+  async _watchChildren() {
+    this.value.forEach(async value => {
+      for await (const _ of value.stream({ immediate: false })) {
+        if (this._acChildren?.signal.aborted) return;
+        this.dispatchEvent(new Event('updated'));
       }
-      await Promise.race(targets.map(target =>
-        new Promise<void>(resolve => target.addEventListener('updated', () => {
-          resolve()
-        }, { once: true, signal: ac.signal }))
-      ));
-      ac.abort();
-      yield this.value;
-    }
+    });
   }
-
-  // override async *stream() {
-  //   yield this.value;
-  //   while (true) {
-  //     const targets = [this, ...this.value];
-  //     const ac = new AbortController();
-  //     this._abortCtrl.signal.onabort = () => {
-  //       ac.abort();
-  //     }
-  //     await Promise.race(targets.map(target =>
-  //       new Promise<void>(resolve => target.addEventListener('updated', () => {
-  //         resolve()
-  //       }, { once: true, signal: ac.signal }))
-  //     ));
-  //     ac.abort();
-  //     yield this.value;
-  //   }
-  // }
 
   override disconnect(): void {
-    this.value.forEach(i => i.disconnect());
     super.disconnect();
+    this.disconnectChildren();
+  }
+
+  disconnectChildren(): void {
+    this._acChildren?.abort();
+    this._acChildren = new AbortController();
   }
 }
 
