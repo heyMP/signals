@@ -49,12 +49,20 @@ export class State<T> extends EventTarget {
       yield this.value;
     }
     while (!this._ac.signal.aborted) {
-      yield new Promise<T>((resolve) => {
+      let done = false;
+      await new Promise<T>((resolve) => {
+        this.addEventListener('updated', () => resolve(this.value), { once: true, signal: this._ac.signal })
         this._ac.signal.onabort = () => {
+          done = true;
           resolve(this.value);
         }
-        this.addEventListener('updated', () => resolve(this.value), { once: true, signal: this._ac.signal })
       });
+      if (!done) {
+        yield this.value;
+      }
+      else {
+        return
+      }
     }
   }
 
