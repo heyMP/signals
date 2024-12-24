@@ -7,6 +7,10 @@ export class SignalUpdatedEvent<T> extends Event {
 export class State<T> extends EventTarget {
   _value: T;
 
+  /**
+   * Abort Controller used to cleanup
+   * event listeners in AsyncIterator stream.
+   */
   _ac = new AbortController();
 
   /**
@@ -64,6 +68,9 @@ export class State<T> extends EventTarget {
     return this.stream();
   }
 
+  /**
+   * Cancel event listeners in AsyncIterator stream.
+   */
   disconnect() {
     this._ac.abort();
     this._ac = new AbortController();
