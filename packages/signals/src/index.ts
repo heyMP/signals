@@ -41,7 +41,7 @@ export class State<T> extends EventTarget {
    * }
    */
   async *stream(options?: { immediate: boolean }) {
-    if (!options?.immediate === false) {
+    if (options?.immediate !== false) {
       yield this.value;
     }
     while (!this._ac.signal.aborted) {
@@ -80,13 +80,11 @@ export class Computed<F extends (...args: any) => any, P extends State<any>[]> e
    */
   constructor(private fn: F, props: P) {
     super(fn());
-    props.forEach(prop => this.watcher(prop));
-  }
-
-  async watcher(prop: State<any>) {
-    for await (const _ of prop) {
-      this.value = this.fn();
-    }
+    props.forEach(prop =>
+      prop.addEventListener('updated', () => {
+        this.value = this.fn();
+      }, { signal: this._ac.signal })
+    );
   }
 }
 
@@ -113,19 +111,19 @@ export class List<T extends State<any>> extends State<T[]> {
   }
 
   override set value(value: T[]) {
-    if (this._value === value) return;
+    const prevValue = this._value;
+    if (prevValue === value) return;
     this._value = value;
-    this.dispatchEvent(new Event('updated'));
+    this.dispatchEvent(new SignalUpdatedEvent(prevValue, this._value));
     this.disconnectChildren();
     this._watchChildren();
   }
 
-  async _watchChildren() {
-    this.value.forEach(async value => {
-      for await (const _ of value.stream({ immediate: false })) {
-        if (this._acChildren?.signal.aborted) return;
+  _watchChildren() {
+    this.value.forEach(value => {
+      value.addEventListener('updated', () => {
         this.dispatchEvent(new Event('updated'));
-      }
+      }, { signal: this._acChildren?.signal })
     });
   }
 
