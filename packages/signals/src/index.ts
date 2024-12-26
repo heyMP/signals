@@ -134,6 +134,10 @@ export class List<T extends State<any>> extends State<T[]> {
     this._watchChildren();
   }
 
+  get length() {
+    return this.value.length;
+  }
+
   _watchChildren() {
     this.value.forEach(value => {
       value.addEventListener('updated', () => {
