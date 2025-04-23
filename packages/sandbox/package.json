@@ -1,5 +1,5 @@
 {
-  "name": "mock-service-worker",
+  "name": "sandbox",
   "private": true,
   "version": "0.0.0",
   "type": "module",
