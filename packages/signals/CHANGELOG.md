@@ -1,5 +1,11 @@
 # @heymp/signals
 
+## 0.1.2
+
+### Patch Changes
+
+- d6f4839: fix: cleanup old files
+
 ## 0.1.1
 
 ### Patch Changes
