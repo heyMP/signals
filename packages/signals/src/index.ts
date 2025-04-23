@@ -1,5 +1,3 @@
-console.log('hi')
-
 export class SignalUpdatedEvent<T> extends Event {
   constructor(public oldValue: T, public newValue: T) {
     super('updated');
