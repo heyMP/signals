@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@heymp/signals": "^0.1.1",
+    "@heymp/signals": "^0.1.2",
     "lit": "^3.2.1",
     "ts-pattern": "^5.5.0"
   },
