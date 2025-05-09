@@ -7,6 +7,10 @@ export class SignalUpdatedEvent<T> extends Event {
 export class State<T> extends EventTarget {
   _value: T;
 
+  /**
+   * Abort Controller used to cleanup
+   * event listeners in AsyncIterator stream.
+   */
   _ac = new AbortController();
 
   /**
@@ -41,17 +45,24 @@ export class State<T> extends EventTarget {
    * }
    */
   async *stream(options?: { immediate: boolean }) {
-    if (!options?.immediate === false) {
+    if (options?.immediate !== false) {
       yield this.value;
     }
     while (!this._ac.signal.aborted) {
-      yield new Promise<T>((resolve) => {
+      let done = false;
+      await new Promise<T>((resolve) => {
+        this.addEventListener('updated', () => resolve(this.value), { once: true, signal: this._ac.signal })
         this._ac.signal.onabort = () => {
-          console.log('disconnecting')
+          done = true;
           resolve(this.value);
         }
-        this.addEventListener('updated', () => resolve(this.value), { once: true, signal: this._ac.signal })
       });
+      if (!done) {
+        yield this.value;
+      }
+      else {
+        return
+      }
     }
   }
 
@@ -65,6 +76,9 @@ export class State<T> extends EventTarget {
     return this.stream();
   }
 
+  /**
+   * Cancel event listeners in AsyncIterator stream.
+   */
   disconnect() {
     this._ac.abort();
     this._ac = new AbortController();
@@ -81,19 +95,27 @@ export class Computed<F extends (...args: any) => any, P extends State<any>[]> e
    */
   constructor(private fn: F, props: P) {
     super(fn());
-    props.forEach(prop => this.watcher(prop));
-  }
-
-  async watcher(prop: State<any>) {
-    for await (const _ of prop) {
-      this.value = this.fn();
-    }
+    props.forEach(prop =>
+      prop.addEventListener('updated', () => {
+        this.value = this.fn();
+      }, { signal: this._ac.signal })
+    );
   }
 }
 
 export class List<T extends State<any>> extends State<T[]> {
   _acChildren?: AbortController;
 
+  /**
+   * Creates a reactive array of signals.
+   * Iterator updates when child values have updated.
+   *
+   * @param { T[] } value Initial value of arrray of Signals.
+   * @example
+   * const counter1 = new Signal.State(0)
+   * const counter2 = new Signal.State(0)
+   * const counters = new Signal.List([ counter1, counter2 ])
+   */
   constructor(value: T[]) {
     super(value);
     this._watchChildren();
@@ -104,19 +126,23 @@ export class List<T extends State<any>> extends State<T[]> {
   }
 
   override set value(value: T[]) {
-    if (this._value === value) return;
+    const prevValue = this._value;
+    if (prevValue === value) return;
     this._value = value;
-    this.dispatchEvent(new Event('updated'));
+    this.dispatchEvent(new SignalUpdatedEvent(prevValue, this._value));
     this.disconnectChildren();
     this._watchChildren();
   }
 
-  async _watchChildren() {
-    this.value.forEach(async value => {
-      for await (const _ of value.stream({ immediate: false })) {
-        if (this._acChildren?.signal.aborted) return;
+  get length() {
+    return this.value.length;
+  }
+
+  _watchChildren() {
+    this.value.forEach(value => {
+      value.addEventListener('updated', () => {
         this.dispatchEvent(new Event('updated'));
-      }
+      }, { signal: this._acChildren?.signal })
     });
   }
 
